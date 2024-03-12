@@ -1,3 +1,6 @@
+// This is not finalsed file, still need to fix some edge cases
+// Visulaise the data as a graph for better understanding of the code
+
 import java.util.Scanner;
 
 class MaxProfit {
