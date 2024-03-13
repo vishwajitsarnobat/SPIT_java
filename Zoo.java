@@ -1,3 +1,5 @@
+// Viewinfo method is yet to be completed
+
 import java.util.Scanner;
 
 class Animal {
