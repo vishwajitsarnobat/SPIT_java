@@ -5,7 +5,7 @@ class Employee {
     private String id;
     private int age;
 
-    Employee (String name, String id, int age) {
+    Employee(String name, String id, int age) {
         this.name = name;
         this.id = id;
         this.age = age;
@@ -27,19 +27,15 @@ class Employee {
 class SalariedEmployee extends Employee {
     double empSalary;
 
-    String name = giveName();
-    String id = giveId();
-    int age = giveAge();
-
-    SalariedEmployee (String name, String id, int age, double empSalary) {
+    SalariedEmployee(String name, String id, int age, double empSalary) {
         super(name, id, age);
         this.empSalary = empSalary;
     }
 
-    void display () {
-        System.out.println("Name: " + name);
-        System.out.println("ID: " + id);
-        System.out.println("Age: " + age);
+    void display() {
+        System.out.println("Name: " + giveName());
+        System.out.println("ID: " + giveId());
+        System.out.println("Age: " + giveAge());
         System.out.println("Salary: " + empSalary);
     }
 }
@@ -72,27 +68,27 @@ class EmployeeData {
 
         if (option == 1) {
             employeeList[ctr] = new SalariedEmployee(name, id, age, (salary + 2000));
-        }
-        else if (option == 2) {
+        } else if (option == 2) {
             employeeList[ctr] = new SalariedEmployee(name, id, age, salary);
-        }
-        else {
+        } else {
             System.out.println("Please enter a valid input");
+            execute(employeeList, ctr); 
+            return; 
         }
 
         System.out.println("Data updated successfully... \n");
-        execute(employeeList, ctr);
+        execute(employeeList, ctr + 1); 
     }
 
     static void findMax(SalariedEmployee[] employeeList, int ctr) {
-        int maxIndex = -1;
-        double maxSalary = -1;
-        for (int i = 0; i < ctr; i++) {
+        int maxIndex = 0;
+        double maxSalary = employeeList[0].empSalary;
+        for (int i = 1; i < ctr; i++) {
             if (employeeList[i].empSalary > maxSalary) {
                 maxIndex = i;
+                maxSalary = employeeList[i].empSalary;
             }
         }
-
         employeeList[maxIndex].display();
     }
 
@@ -105,7 +101,6 @@ class EmployeeData {
         switch(opt) {
             case 1: 
                 takeData(employeeList, ctr);
-                ctr++;
                 break;
 
             case 2:
@@ -119,10 +114,15 @@ class EmployeeData {
             case 4:
                 System.out.println("See you soon :)");
                 break;
+
+            default:
+                System.out.println("Invalid option. Please enter a number between 1 and 4.");
+                execute(employeeList, ctr);
         }
     }
+
     public static void main(String[] args) {
-        System.out.println("NOTE:   YOU CAN STORE DATA FOR UPTO 5 EMPLOYEES");
+        System.out.println("NOTE: YOU CAN STORE DATA FOR UP TO 5 EMPLOYEES");
         
         SalariedEmployee[] employeeList = new SalariedEmployee[5];
         int ctr = 0;
