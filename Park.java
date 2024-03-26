@@ -2,13 +2,19 @@ import java.util.Scanner;
 import java.util.Calendar;
 
 abstract class AmusementPark {
-	abstract double getCost();
+	abstract int getCost();
 }
 
 class EsselWorld extends AmusementPark {
 	int cost;
 
-	double getCost() {
+    EsselWorld(Person[] group) {
+        for (int i = 0; i < group.length; i++) {
+            cost += group[i].cost;
+        }
+    }
+
+	int getCost() {
 		return cost;
 	}
 }
@@ -16,24 +22,39 @@ class EsselWorld extends AmusementPark {
 class Imagica extends AmusementPark {
 	int cost;
 
-	double getCost() {
+    Imagica(Person[] group) {
+        for (int i = 0; i < group.length; i++) {
+            cost += group[i].cost;
+        }
+    }
+
+	int getCost() {
 		return cost;
 	}
 }
 
 class Person {
 	int age;
-	int rides;
+	int[] games;
 	int cost;
 	
-	Person(int age, int rides, int cost) {
+	Person(int age, int[] games, int cost) {
 		this.age = age;
-		this.rides = rides;
+		this.games = games;
 		this.cost = cost;
 	}
 }
 
 class Park {
+    static int extraGamesCost(int[] games) {
+        int extraCost = 0;
+        for (int i = 0; i < games.length; i++) {
+            if (games[i] != 1 && games[i] != 2 && games[i] != 3) {
+                extraCost += 50;
+            }
+        }
+        return extraCost;
+    }
 
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
@@ -58,51 +79,97 @@ class Park {
 		
 
 		if(option == 1) {
-			AmusementPark park = new Imagica();
 			for (int i = 0; i < grpCount; i++) {
-				System.out.print("Enter age of person {i + 1}: ");
+				System.out.print("Enter age of person " + (i + 1) + ": ");
 				int age = input.nextInt();
-				System.out.print("Enter number of games played: ");
-				int games = input.nextInt();
+
+                System.out.print("Enter number of games played: ");
+                int gamesCount = input.nextInt();
+                int[] games = new int[gamesCount]; 
+				System.out.print("Enter game number of games played (space seperated): ");
+				for (int j = 0; j < gamesCount; j++) {
+                    games[j] = input.nextInt();
+                }
+
+                int cost = 0;
 				if (age > 21) {
-					group[i] = new Person(age, games, 1050);
+					cost += 1050;
 				}
 				else if (age >= 60 || age <= 21) {
-					group[i] = new Person(age, games, 660);
+					cost += 660;
 				}
+                
+                cost += extra;
+                cost += extraGamesCost(games);
 
-				group[i].cost += 300;
-
-				if (games > 3) {
-					int extraGames = games - 3;
-					group[i].cost += (extraGames * 50);
-				}
+                group[i] = new Person(age, games, cost);
 			}
+            AmusementPark imagica = new Imagica(group);
+
+            // execution
+            for (int i = 0; i < grpCount; i++) {
+                int spent = group[i].cost;
+                int played = group[i].games.length;
+                int nplayed = 7 - played;
+                System.out.println("Person " + (i + 1) + " spent Rs. " + spent);
+                System.out.println("Person " + (i + 1) + " played " + played + " games");
+                System.out.println("Person " + (i + 1) + " didn't play " + nplayed + " games");
+                System.out.print("Person " + (i + 1) + " played the games: ");
+                for (int j = 0; j < played; j++) {
+                    System.out.print(group[i].games[j] + " ");
+                }
+            }
+            int totalCost = imagica.getCost();
+            System.out.println("Total Cost: " + totalCost);
 		}
 		else if(option == 2) {
-			AmusementPark park = new EsselWorld();
 			for (int i = 0; i < grpCount; i++) {
-				System.out.print("Enter age of person {i + 1}: ");
+				System.out.print("Enter age of person " + (i + 1) + ": ");
 				int age = input.nextInt();
-				System.out.print("Enter number of games played: ");
-				int games = input.nextInt();
+
+                System.out.print("Enter number of games played: ");
+                int gamesCount = input.nextInt();
+                int[] games = new int[gamesCount]; 
+				System.out.print("Enter game number of games played (space seperated): ");
+				for (int j = 0; j < gamesCount; j++) {
+                    games[j] = input.nextInt();
+                }
+
+                int cost = 0;
 				if (age > 21) {
-					group[i] = new Person(age, 0, 1500);
+					cost += 1500;
 				}
 				else if (age >= 60 || age <= 21) {
-					group[i] = new Person(age, 0, 1100);
+					cost += 1100;
 				}
-				if (dayOfWeek == 1 || dayOfWeek == 7) {
-					group[i].cost += 300;
-				}
-				if (games > 3) {
-					int extraGames = games - 3;
-					group[i].cost += (extraGames * 50);
-				}
+                
+                cost += extra;
+                cost += extraGamesCost(games);
+                
+                group[i] = new Person(age, games, cost);
 			}
+            AmusementPark esselworld = new EsselWorld(group);
+
+            //execution
+            for (int i = 0; i < grpCount; i++) {
+                int spent = group[i].cost;
+                int played = group[i].games.length;
+                int nplayed = 5 - played;
+                System.out.println("Person " + (i + 1) + " spent Rs. " + spent);
+                System.out.println("Person " + (i + 1) + " played " + played + " games");
+                System.out.println("Person " + (i + 1) + " didn't play " + nplayed + " games");
+                System.out.print("Person " + (i + 1) + " played the games: ");
+                for (int j = 0; j < played; j++) {
+                    System.out.print(group[i].games[j] + " ");
+                }
+            }
+            int totalCost = esselworld.getCost();
+            System.out.println("Total Cost: " + totalCost);
 		}
 		else {
 			System.out.print("Please enter a valid input!");
 		}
+
+        input.close();
 	}
 }
