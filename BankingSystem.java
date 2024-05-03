@@ -60,7 +60,7 @@ class Saving_Account extends Account {
 
     void withdraw(double amount) {
         try {
-            double temp = balance -= amount;
+            double temp = balance - amount;
             if (temp < minBalance) {
                 throw new MinBalanceException();
             }
@@ -83,7 +83,7 @@ class Saving_Account extends Account {
 
     void transfer(double amount) {
         try {
-            double temp = balance -= amount;
+            double temp = balance - amount;
             if (temp < minBalance) {
                 throw new MinBalanceException();
             }
@@ -108,7 +108,8 @@ class BankingSystem {
     }
 
     public static void accountMenu(int i, ArrayList<Saving_Account> userData) {
-        System.out.println("1. Deposit money.\n2. Withdraw money.\n3. Check Amount on adding interest.\n4. Check account balance.\n5. Transfer money.\n6. Exit Bank.\n7. Access another bank account.");
+        System.out.println(
+                "1. Deposit money.\n2. Withdraw money.\n3. Check Amount on adding interest.\n4. Check account balance.\n5. Transfer money.\n6. Exit Bank.\n7. Access another bank account.");
         System.out.print("Your choice: ");
         int option = input.nextInt();
         Saving_Account user = userData.get(i);
@@ -122,12 +123,14 @@ class BankingSystem {
                     System.out.print("Input amount to be deposited: ");
                     double depositAmount = input.nextDouble();
                     user.deposit(depositAmount);
+                    accountMenu(i, userData);
                     break;
 
                 case 2:
                     System.out.print("Enter amount to withdraw: ");
                     double withdrawAmount = input.nextDouble();
                     user.withdraw(withdrawAmount);
+                    accountMenu(i, userData);
                     break;
 
                 case 3:
@@ -136,10 +139,12 @@ class BankingSystem {
                     System.out.print("Input number of years: ");
                     double years = input.nextDouble();
                     user.addInterest(principal, years);
+                    accountMenu(i, userData);
                     break;
 
                 case 4:
                     user.display();
+                    accountMenu(i, userData);
                     break;
 
                 case 5:
@@ -150,22 +155,33 @@ class BankingSystem {
 
                     boolean flag = false;
                     int j = -1;
-                    while(!flag) {
-                        System.out.print("Please enter a valid account number of recipient's bank: ");
-                        accNum = input.nextDouble();
+                    while (!flag) {
                         for (j = 0; j < userData.size(); j++) {
                             if (userData.get(j).accNo == accNum) {
                                 flag = true;
                                 break;
                             }
                         }
+                        if (flag) {
+                            break;
+                        }
+                        else {
+                            System.out.print("Please enter a valid account number of recipient's bank: ");
+                            accNum = input.nextDouble();
+                        }
                     }
+
                     double temp = user.balance;
                     user.transfer(transferAmount);
                     if (temp != user.balance) {
                         userData.get(j).balance += transferAmount;
+                        System.out.println("Amount debited from you account, account number: " + user.accNo
+                            + " and credited to account with account number: " + accNum);
                     }
-                    System.out.println("Amount debited from you account, account number: " + user.accNo + " and credited to account with account number: " + accNum);
+                    else {
+                        System.out.println("Transaction terminated!");
+                    }
+                    accountMenu(i, userData);
                     break;
 
                 case 6:
@@ -176,14 +192,10 @@ class BankingSystem {
                     welcomeMenu(userData);
                     break;
             }
+        } catch (InvalidOptionException e) {
+            System.out.println(e);
             accountMenu(i, userData);
-        }catch(
-
-    InvalidOptionException e)
-    {
-        System.out.println(e);
-        accountMenu(i, userData);
-    }
+        }
     }
 
     public static double checkMinBalance(double minBalance, double balance) {
@@ -242,10 +254,10 @@ class BankingSystem {
                     String name = input.nextLine();
                     if (name.equals(userData.get(i).name)) {
                         System.out.println("User found successfully!");
+                        return i;
                     } else {
                         System.out.println("The entered name does not match the name linked with the account number");
                     }
-                    return i;
                 }
             }
             throw new UserNotFoundException();
@@ -257,12 +269,12 @@ class BankingSystem {
 
     public static void welcomeMenu(ArrayList<Saving_Account> userData) {
         System.out.println("Welcome! Please choose an option to continue...");
-        System.out.println(" 1. Login into an existing account.\n 2. Create a new account");
+        System.out.println(" 1. Login into an existing account.\n 2. Create a new account \n 3. Exit Bank.");
         System.out.print("Your choice: ");
 
         int i = -1;
         int opt = input.nextInt();
-        while (opt != 1 && opt != 2) {
+        while (opt != 1 && opt != 2 && opt != 3) {
             try {
                 throw new InvalidOptionException();
             } catch (InvalidOptionException e) {
@@ -273,14 +285,19 @@ class BankingSystem {
         }
 
         if (opt == 1) {
-            while (i < 0) {
-                i = login(userData);
+            i = login(userData);
+            if (i < 0) {
+                welcomeMenu(userData);
             }
-        } else {
+            else {
+                accountMenu(i, userData);
+            }
+        } else if (opt == 2) {
             i = createAccount(userData);
+            accountMenu(i, userData);
+        } else if (opt == 3) {
+            System.out.println("See you soon :)");
         }
-
-        accountMenu(i, userData);
     }
 
     public static void main(String[] args) {
